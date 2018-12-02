@@ -1,5 +1,5 @@
 % encoding : a -> 1, b -> 2, ... , z -> 26
-main() :-
+main :-
     countDigitSequenceDecodings("111", Count1), % aaa, ak, ka
     format("~w -> ~w\n", ["111", Count1]),
 
@@ -32,3 +32,5 @@ countDigitSequenceDecodings(Code, Count) :-
         ),
         Count is OneElementalDecoding + TwoElementalDecoding
     ).
+
+:- main.

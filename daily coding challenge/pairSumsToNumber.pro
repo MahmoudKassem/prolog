@@ -1,4 +1,4 @@
-main() :-
+main :-
     pairSumsToNumber(17, [10, 5, 7, 8], Pair1),
     format("~w ~w -> (~w)\n", [17, [10, 5, 7, 8], Pair1]),
 
@@ -17,3 +17,5 @@ pairSumsToNumber(Number, List, Pair) :-
     ) ->
         Pair = (A, B);
     Pair = false.
+
+:- main.
