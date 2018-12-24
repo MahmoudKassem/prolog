@@ -81,16 +81,27 @@ main :-
     format(" -> ~w\n\n", Count3).
 
 printTabs(NumberOfTabs) :-
-    NumberOfTabs > 0 -> write("\t"), NumberOfTabsMinusOne is NumberOfTabs - 1, printTabs(NumberOfTabsMinusOne); true.
+    NumberOfTabs > 0 ->
+        (
+            write("\t"),
+            printTabs(NumberOfTabs - 1)
+        );
+    true.
 
 printBinaryTree(BinaryTree, NumberOfTabs) :-
     BinaryTree = nil -> write("nil");
     BinaryTree = binaryTree(Value, Left, Right),
-    writeln("binaryTree("), NumberOfTabsPlusOne is NumberOfTabs + 1,
-    printTabs(NumberOfTabsPlusOne), writeln(Value),
-    printTabs(NumberOfTabsPlusOne), printBinaryTree(Left, NumberOfTabsPlusOne), write("\n"),
-    printTabs(NumberOfTabsPlusOne), printBinaryTree(Right, NumberOfTabsPlusOne), write("\n"),
-    printTabs(NumberOfTabs), write(")").
+    writeln("binaryTree("),
+    printTabs(NumberOfTabs + 1),
+    writeln(Value),
+    printTabs(NumberOfTabs + 1),
+    printBinaryTree(Left, NumberOfTabs + 1),
+    write("\n"),
+    printTabs(NumberOfTabs + 1),
+    printBinaryTree(Right, NumberOfTabs + 1),
+    write("\n"),
+    printTabs(NumberOfTabs),
+    write(")").
 
 countUnivalBinaryTrees(BinaryTree, Count) :-
     BinaryTree = nil -> Count = 0;

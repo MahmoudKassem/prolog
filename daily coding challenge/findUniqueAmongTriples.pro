@@ -24,8 +24,7 @@ findUniqueAmongTriples(List, UniqueElement) :-
 findUniqueAmongTriples(List, BitPosition, UniqueElement, Accumulator) :-
     BitPosition =:= 31 ->
         (
-            Accumulator /\ (1 << 30) > 0 ->
-                UniqueElement is Accumulator - 2 ** 31;
+            Accumulator /\ (1 << 30) > 0 -> UniqueElement is Accumulator - 2 ** 31;
             UniqueElement is Accumulator
         );
     (

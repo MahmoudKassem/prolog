@@ -27,22 +27,31 @@ isBracketingValid(Brackets, Stack, IsValid) :-
     Brackets = [CurrentBracket | Rest],
     (
         (
-            CurrentBracket == '('; CurrentBracket == '['; CurrentBracket == '{'
+            CurrentBracket == '(';
+            CurrentBracket == '[';
+            CurrentBracket == '{'
         ) ->
             (
                 push(CurrentBracket, Stack, NewStack),
                 isBracketingValid(Rest, NewStack, IsValid)
             );
+        pop(Stack, PreviousBracket, NewStack),
         (
-            pop(Stack, PreviousBracket, NewStack),
             (
-                (PreviousBracket == '(', CurrentBracket == ')');
-                (PreviousBracket == '[', CurrentBracket == ']');
-                (PreviousBracket == '{', CurrentBracket == '}')
-            ) ->
-                isBracketingValid(Rest, NewStack, IsValid);
-            IsValid = false
-        )
+                PreviousBracket == '(',
+                CurrentBracket == ')'
+            );
+            (
+                PreviousBracket == '[',
+                CurrentBracket == ']'
+            );
+            (
+                PreviousBracket == '{',
+                CurrentBracket == '}'
+            )
+        ) ->
+            isBracketingValid(Rest, NewStack, IsValid);
+        IsValid = false
     ).
 
 :- main.

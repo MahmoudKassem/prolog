@@ -25,7 +25,10 @@ countDigitSequenceDecodings(Code, Count) :-
         (
             (
                 FirstDigit == '1';
-                FirstDigit == '2', SecondDigit @< '7'
+                (
+                    FirstDigit == '2',
+                    SecondDigit @< '7'
+                )
             ) ->
                 countDigitSequenceDecodings(Rest, TwoElementalDecoding);
             TwoElementalDecoding is 0
