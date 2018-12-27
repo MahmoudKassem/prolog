@@ -1,3 +1,5 @@
+:- initialization(main).
+
 main :-
     List1 = [1, 2, 3, 4],
     List2 = ['a', 'b', 'c', 'd'],
@@ -262,5 +264,3 @@ encode(PackedList, EncodedList, Accumulator) :-
             );
         encode(Rest, EncodedList, Accumulator)
     ).
-
-:- main.

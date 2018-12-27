@@ -1,3 +1,5 @@
+:- initialization(main).
+
 main :-
     isBracketingValid("([])[]({})", IsValid1),
     format("~w -> ~w\n", ["([])[]({})", IsValid1]),
@@ -53,5 +55,3 @@ isBracketingValid(Brackets, Stack, IsValid) :-
             isBracketingValid(Rest, NewStack, IsValid);
         IsValid = false
     ).
-
-:- main.

@@ -1,3 +1,5 @@
+:- initialization(main).
+
 % encoding : a -> 1, b -> 2, ... , z -> 26
 main :-
     countDigitSequenceDecodings("111", Count1), % aaa, ak, ka
@@ -35,5 +37,3 @@ countDigitSequenceDecodings(Code, Count) :-
         ),
         Count is OneElementalDecoding + TwoElementalDecoding
     ).
-
-:- main.

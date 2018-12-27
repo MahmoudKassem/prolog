@@ -1,3 +1,5 @@
+:- initialization(main).
+
 main :-
     findUniqueAmongTriples([6, 1, 3, 3, 3, 6, 6], Unique1),
     format("~w -> ~w\n", [[6, 1, 3, 3, 3, 6, 6], Unique1]),
@@ -36,5 +38,3 @@ findUniqueAmongTriples(List, BitPosition, UniqueElement, Accumulator) :-
             findUniqueAmongTriples(List, (BitPosition + 1), UniqueElement, (Accumulator \/ OneAtBitPosition));
         findUniqueAmongTriples(List, (BitPosition + 1), UniqueElement, Accumulator)
     ).
-
-:- main.

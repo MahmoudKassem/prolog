@@ -1,3 +1,5 @@
+:- initialization(main).
+
 main :-
     BinaryTree1 =
         binaryTree(
@@ -123,5 +125,3 @@ countUnivalBinaryTrees(BinaryTree, Count) :-
         ValueLeft = ValueRight -> Count is 1 + LeftCount + RightCount;
         Count is LeftCount + RightCount
     ).
-
-:- main.

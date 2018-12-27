@@ -1,4 +1,6 @@
-main() :-
+:- initialization(main).
+
+main :-
     List1 = [],
     List2 = ['a', 'a', 'a', 'a', 'b', 'c', 'c', 'a', 'a', 'd', 'e', 'e', 'e', 'e'],
     List3 = [1, 1, 1, 1, 2, 3, 3, 1, 1, 4, 5, 5, 5, 5],
@@ -318,5 +320,3 @@ removeAt(List, Position, ResultList, RemovedElement, Index, Accumulator) :-
             removeAt(Rest, Position, ResultList, RemovedElement, (Index + 1), NewAccumulator)
         )
     ).
-
-:- main.

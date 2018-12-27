@@ -1,3 +1,5 @@
+:- initialization(main).
+
 main :-
     editDistance("kitten", "sitting", Distance1),
     format("~w, ~w -> ~w\n", ["kitten", "sitting", Distance1]),
@@ -30,5 +32,3 @@ editDistance(CharacterList1, CharacterList2, Distance, Accumulator) :-
                 editDistance(Rest1, Rest2, Distance, (Accumulator + 1));
             editDistance(Rest1, Rest2, Distance, Accumulator)
         ).
-
-:- main.
