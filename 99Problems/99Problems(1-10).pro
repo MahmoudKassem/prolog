@@ -211,15 +211,12 @@ myFlatten(NestedList, FlattenedList) :-
 compress(List, CompressedList) :-
     compress(List, CompressedList, []).
 compress(List, CompressedList, Accumulator) :-
-    List = [] -> CompressedList = Accumulator;
-    List = [Element] -> append(Accumulator, [Element], CompressedList);
+    List = [] -> myReverse(Accumulator, CompressedList);
+    List = [Element] -> myReverse([Element | Accumulator], CompressedList);
     List = [Element, NextElement | Rest],
     (
         Element == NextElement -> compress([NextElement | Rest], CompressedList, Accumulator);
-        (
-            append(Accumulator, [Element], NewAccumulator),
-            compress([NextElement | Rest], CompressedList, NewAccumulator)
-        )
+        compress([NextElement | Rest], CompressedList, [Element | Accumulator])
     ).
 
 pack(List, PackedList) :-
