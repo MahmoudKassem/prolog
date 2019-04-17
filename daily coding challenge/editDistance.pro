@@ -14,7 +14,6 @@ editDistance(String1, String2, Distance) :-
     string_chars(String1, CharacterList1), string_chars(String2, CharacterList2),
     editDistance(CharacterList1, CharacterList2, Distance, 0).
 editDistance(CharacterList1, CharacterList2, Distance, Accumulator) :-
-    CharacterList1 == CharacterList2 -> Distance is Accumulator;
     CharacterList1 = [] ->
         (
             length(CharacterList2, Length2),
