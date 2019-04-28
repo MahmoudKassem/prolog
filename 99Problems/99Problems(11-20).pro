@@ -215,10 +215,9 @@ encodedList(List, EncodedList, Accumulator) :-
 dupli(List, DuplicatedList) :-
     dupli(List, DuplicatedList, []).
 dupli(List, DuplicatedList, Accumulator) :-
-    List = [] -> DuplicatedList = Accumulator;
+    List = [] -> reverse(Accumulator, DuplicatedList);
     List = [Element | Rest],
-    append(Accumulator, [Element, Element], NewAccumulator),
-    dupli(Rest, DuplicatedList, NewAccumulator).
+    dupli(Rest, DuplicatedList, [Element, Element | Accumulator]).
 
 repli(List, NumberOfRepitions, ReplicatedList) :-
     repli(List, NumberOfRepitions, ReplicatedList, []).
@@ -232,52 +231,40 @@ repli(List, NumberOfRepitions, ReplicatedList, Accumulator) :-
 myDrop(List, Number, ReducedList) :-
     myDrop(List, Number, ReducedList, 1, []).
 myDrop(List, Number, ReducedList, Count, Accumulator) :-
-    List = [] -> ReducedList = Accumulator;
+    List = [] -> reverse(Accumulator, ReducedList);
     List = [Element | Rest],
     (
         Count =:= Number ->
             myDrop(Rest, Number, ReducedList, 1, Accumulator);
-        (
-            append(Accumulator, [Element], NewAccumulator),
-            myDrop(Rest, Number, ReducedList, (Count + 1), NewAccumulator)
-        )
+        myDrop(Rest, Number, ReducedList, (Count + 1), [Element | Accumulator])
     ).
 
 split(List, LengthOfFirstPart, FirstPart, SecondPart) :-
     split(List, LengthOfFirstPart, FirstPart, SecondPart, 0, [], []).
-split(List, LengthOfFirstPart, FirstPart, SecondPart, Index, FirstPartAccumulator, SecondPartAccumulator) :-
+split(List, LengthOfFirstPart, FirstPart, SecondPart, Index, FirstAccumulator, SecondAccumulator) :-
     List = [] ->
         (
-            FirstPart = FirstPartAccumulator,
-            SecondPart = SecondPartAccumulator
+            reverse(FirstAccumulator, FirstPart),
+            reverse(SecondAccumulator, SecondPart)
         );
     List = [Element | Rest],
     (
         Index < LengthOfFirstPart ->
-            (
-                append(FirstPartAccumulator, [Element], NewAccumulator),
-                split(Rest, LengthOfFirstPart, FirstPart, SecondPart, (Index + 1), NewAccumulator, SecondPartAccumulator)
-            );
-        (
-            append(SecondPartAccumulator, [Element], NewAccumulator),
-            split(Rest, LengthOfFirstPart, FirstPart, SecondPart, (Index + 1), FirstPartAccumulator, NewAccumulator)
-        )
+            split(Rest, LengthOfFirstPart, FirstPart, SecondPart, (Index + 1), [Element | FirstAccumulator], SecondAccumulator);
+        split(Rest, LengthOfFirstPart, FirstPart, SecondPart, (Index + 1), FirstAccumulator,  [Element | SecondAccumulator])
     ).
 
 slice(List, LowerBound, HigherBound, SlicedList) :-
     slice(List, LowerBound, HigherBound, SlicedList, 1, []).
 slice(List, LowerBound, HigherBound, SlicedList, Index, Accumulator) :-
-    List = [] -> SlicedList = Accumulator;
+    List = [] -> reverse(Accumulator, SlicedList);
     List = [Element | Rest],
     (
         (
             Index >= LowerBound,
             Index =< HigherBound
         ) ->
-            (
-                append(Accumulator, [Element], NewAccumulator),
-                slice(Rest, LowerBound, HigherBound, SlicedList, (Index + 1), NewAccumulator)
-            );
+            slice(Rest, LowerBound, HigherBound, SlicedList, (Index + 1), [Element | Accumulator]);
         slice(Rest, LowerBound, HigherBound, SlicedList, (Index + 1), Accumulator)
     ).
 
@@ -305,7 +292,7 @@ removeAt(List, Position, ResultList, RemovedElement) :-
 removeAt(List, Position, ResultList, RemovedElement, Index, Accumulator) :-
     List = [] ->
         (
-            ResultList = Accumulator,
+            reverse(Accumulator, ResultList),
             RemovedElement = false
         );
     List = [Element | Rest],
@@ -315,8 +302,5 @@ removeAt(List, Position, ResultList, RemovedElement, Index, Accumulator) :-
                 RemovedElement = Element,
                 append(Accumulator, Rest, ResultList)
             );
-        (
-            append(Accumulator, [Element], NewAccumulator),
-            removeAt(Rest, Position, ResultList, RemovedElement, (Index + 1), NewAccumulator)
-        )
+        removeAt(Rest, Position, ResultList, RemovedElement, (Index + 1), [Element | Accumulator])
     ).
