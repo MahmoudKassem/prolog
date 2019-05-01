@@ -122,7 +122,9 @@ main :-
     format("~w -> ~w\n", [List9, EncodedList9]),
     encode(List10, EncodedList10),
     format("~w -> ~w\n\n", [List10, EncodedList10]),
-    resetTestLists(List1, List2, List3, List4, List5, List6, List9, List10).
+    resetTestLists(List1, List2, List3, List4, List5, List6, List9, List10),
+
+    halt(0).
 
 resetTestLists(List1, List2, List3, List4, List5, List6, List9, List10) :-
     List1 = [1, 2, 3, 4],

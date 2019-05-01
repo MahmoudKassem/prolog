@@ -9,7 +9,9 @@ main :-
     format("~w -> ~w\n", ["1234", Count2]),
 
     countDigitSequenceDecodings("102", Count3), % jb
-    format("~w -> ~w\n", ["102", Count3]).
+    format("~w -> ~w\n", ["102", Count3]),
+
+    halt(0).
 
 countDigitSequenceDecodings(Code, Count) :-
     string_chars(Code, DigitList),

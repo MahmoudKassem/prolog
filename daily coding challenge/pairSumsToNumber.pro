@@ -11,7 +11,9 @@ main :-
     format("~w, ~w -> (~w)\n", [0, [-1, 0, 1], Pair3]),
 
     pairSumsToNumber(10, [5, 0, 5], Pair4),
-    format("~w, ~w -> (~w)\n", [10, [5, 0, 5], Pair4]).
+    format("~w, ~w -> (~w)\n", [10, [5, 0, 5], Pair4]),
+
+    halt(0).
 
 pairSumsToNumber(Number, List, Pair) :-
     (

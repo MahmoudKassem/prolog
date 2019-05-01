@@ -94,7 +94,9 @@ main :-
     removeAt(List2, 5, ResultList2, RemovedElement2),
     format("~w, ~w -> (~w, ~w)\n", [List2, 5, ResultList2, RemovedElement2]),
     removeAt(List3, 5, ResultList3, RemovedElement3),
-    format("~w, ~w -> (~w, ~w)\n\n", [List3, 5, ResultList3, RemovedElement3]).
+    format("~w, ~w -> (~w, ~w)\n\n", [List3, 5, ResultList3, RemovedElement3]),
+
+    halt(0).
 
 resetTestLists(List1, List2, List3) :-
     List1 = [],

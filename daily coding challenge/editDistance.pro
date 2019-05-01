@@ -8,7 +8,9 @@ main :-
     format("~w, ~w -> ~w\n", ["test", "tset", Distance2]),
 
     editDistance("giraf", "farig", Distance3),
-    format("~w, ~w -> ~w\n", ["giraf", "farig", Distance3]).
+    format("~w, ~w -> ~w\n", ["giraf", "farig", Distance3]),
+
+    halt(0).
 
 editDistance(String1, String2, Distance) :-
     string_chars(String1, CharacterList1), string_chars(String2, CharacterList2),

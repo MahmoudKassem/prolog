@@ -11,7 +11,9 @@ main :-
     format("~w -> ~w\n", ["((()", IsValid3]),
 
     isBracketingValid("", IsValid4),
-    format("~w -> ~w\n", ["", IsValid4]).
+    format("~w -> ~w\n", ["", IsValid4]),
+
+    halt(0).
 
 push(Top, Rest, [Top | Rest]).
 pop([Top | Rest], Top, Rest).

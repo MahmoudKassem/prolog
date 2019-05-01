@@ -80,7 +80,9 @@ main :-
 
     printBinaryTree(BinaryTree3, 0), write("\n"),
     countUnivalBinaryTrees(BinaryTree3, Count3),
-    format(" -> ~w\n\n", Count3).
+    format(" -> ~w\n\n", Count3),
+
+    halt(0).
 
 printTabs(NumberOfTabs) :-
     NumberOfTabs > 0 ->
