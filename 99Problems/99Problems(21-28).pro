@@ -12,7 +12,6 @@ main :-
     format("~w, ~w, ~w -> ~w\n", [List2, 'e', 3, UpdatedList2]),
     insertAt(List3, 5, 3, UpdatedList3),
     format("~w, ~w, ~w -> ~w\n\n", [List3, 5, 3, UpdatedList3]),
-    resetTestLists(List1, List2, List3),
 
     writeln("#22 create a list containing all integers within a given range"),
     myRange(3, 8, ResultList1),
@@ -21,7 +20,6 @@ main :-
     format("~w, ~w -> ~w\n", [-8, -3, ResultList2]),
     myRange(8, 3, ResultList3),
     format("~w, ~w -> ~w\n\n", [8, 3, ResultList3]),
-    resetTestLists(List1, List2, List3),
 
     writeln("#23 extract a given number of randomly selected elements from a list"),
     randomSelection(List1, 3, ResultList4),
@@ -30,7 +28,6 @@ main :-
     format("~w, ~w -> ~w\n", [List2, 3, ResultList5]),
     randomSelection(List3, 3, ResultList6),
     format("~w, ~w -> ~w\n\n", [List3, 3, ResultList6]),
-    resetTestLists(List1, List2, List3),
 
     writeln("#24 draw N different random numbers from the set 1..M"),
     lotto(6, 49, ResultList7),
@@ -51,11 +48,6 @@ main :-
     format("~w -> ~w\n\n", [List3, PermutatedList3]),
 
     halt(0).
-
-resetTestLists(List1, List2, List3) :-
-    List1 = [1, 2, 3, 4],
-    List2 = ['a', 'b', 'c', 'd'],
-    List3 = [].
 
 insertAt(List, ValueToBeInserted, Position, UpdatedList) :-
     insertAt(List, ValueToBeInserted, Position, UpdatedList, 1, []).

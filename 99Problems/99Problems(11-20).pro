@@ -12,7 +12,6 @@ main :-
     format("~w -> ~w\n", [List2, EncodedList2]),
     encodeModified(List3, EncodedList3),
     format("~w -> ~w\n\n", [List3, EncodedList3]),
-    resetTestLists(List1, List2, List3),
 
     writeln("#12 decode a run-length encoded list"),
     decodeModified(EncodedList1, DecodedList1),
@@ -21,7 +20,6 @@ main :-
     format("~w -> ~w\n", [EncodedList2, DecodedList2]),
     decodeModified(EncodedList3, DecodedList3),
     format("~w -> ~w\n\n", [EncodedList3, DecodedList3]),
-    resetTestLists(List1, List2, List3),
 
     writeln("#13 run-length encoding of a list(direct solution)"),
     encodeDirect(List1, EncodedList1),
@@ -30,7 +28,6 @@ main :-
     format("~w -> ~w\n", [List2, EncodedList2]),
     encodeDirect(List3, EncodedList3),
     format("~w -> ~w\n\n", [List3, EncodedList3]),
-    resetTestLists(List1, List2, List3),
 
     writeln("#14 duplicate the elements of a list"),
     dupli(List1, DuplicatedList1),
@@ -39,7 +36,6 @@ main :-
     format("~w -> ~w\n", [List2, DuplicatedList2]),
     dupli(List3, DuplicatedList3),
     format("~w -> ~w\n\n", [List3, DuplicatedList3]),
-    resetTestLists(List1, List2, List3),
 
     writeln("#15 replicate the elements of a list a given number of times"),
     repli(List1, 3, ReplicatedList1),
@@ -48,7 +44,6 @@ main :-
     format("~w, ~w -> ~w\n", [List2, 3, ReplicatedList2]),
     repli(List3, 3, ReplicatedList3),
     format("~w, ~w -> ~w\n\n", [List3, 3, ReplicatedList3]),
-    resetTestLists(List1, List2, List3),
 
     writeln("#16 drop every N'th element from a list"),
     myDrop(List1, 5, ReducedList1),
@@ -57,7 +52,6 @@ main :-
     format("~w, ~w -> ~w\n", [List2, 5, ReducedList2]),
     myDrop(List3, 5, ReducedList3),
     format("~w, ~w -> ~w\n\n", [List3, 5, ReducedList3]),
-    resetTestLists(List1, List2, List3),
 
     writeln("#17 split a list into two parts; the length of the first part is given"),
     split(List1, 5, FirstPart1, SecondPart1),
@@ -66,7 +60,6 @@ main :-
     format("~w, ~w -> (~w, ~w)\n", [List2, 5, FirstPart2, SecondPart2]),
     split(List3, 5, FirstPart3, SecondPart3),
     format("~w, ~w -> (~w, ~w)\n\n", [List3, 5, FirstPart3, SecondPart3]),
-    resetTestLists(List1, List2, List3),
 
     writeln("#18 Extract a slice from a list"),
     slice(List1, 3, 8, SlicedList1),
@@ -75,7 +68,6 @@ main :-
     format("~w, ~w, ~w -> ~w\n", [List2, 3, 8, SlicedList2]),
     slice(List3, 3, 8, SlicedList3),
     format("~w, ~w, ~w -> ~w\n\n", [List3, 3, 8, SlicedList3]),
-    resetTestLists(List1, List2, List3),
 
     writeln("#19 rotate a list n places to the left"),
     rotate(List1, 3, RotatedList1),
@@ -86,7 +78,6 @@ main :-
     format("~w, ~w -> ~w\n", [List3, -3, RotatedList3]),
     rotate(List3, 3, RotatedList4),
     format("~w, ~w -> ~w\n\n", [List3, 3, RotatedList4]),
-    resetTestLists(List1, List2, List3),
 
     writeln("#20 remove the K'th element from a list"),
     removeAt(List1, 5, ResultList1, RemovedElement1),
@@ -97,11 +88,6 @@ main :-
     format("~w, ~w -> (~w, ~w)\n\n", [List3, 5, ResultList3, RemovedElement3]),
 
     halt(0).
-
-resetTestLists(List1, List2, List3) :-
-    List1 = [],
-    List2 = ['a', 'a', 'a', 'a', 'b', 'c', 'c', 'a', 'a', 'd', 'e', 'e', 'e', 'e'],
-    List3 = [1, 1, 1, 1, 2, 3, 3, 1, 1, 4, 5, 5, 5, 5].
 
 pack(List, PackedList) :-
     pack(List, PackedList, [], []).
