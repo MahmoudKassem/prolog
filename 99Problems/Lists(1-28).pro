@@ -104,9 +104,9 @@ main :-
     drop(List10, 5, Drop10), format("~w, ~w -> ~w\n\n", [List10, 5, Drop10]),
 
     writeln("#17 split a list into two parts; the length of the first part is given"),
-    split(List3, 5, First1, Second1), format("~w, ~w -> (~w, ~w)\n", [List3, 5, First1, Second1]),
-    split(List9, 5, First2, Second2), format("~w, ~w -> (~w, ~w)\n", [List9, 5, First2, Second2]),
-    split(List10, 5, First3, Second3), format("~w, ~w -> (~w, ~w)\n\n", [List10, 5, First3, Second3]),
+    split(List3, 5, Left1, Right1), format("~w, ~w -> (~w, ~w)\n", [List3, 5, Left1, Right1]),
+    split(List9, 5, Left2, Right2), format("~w, ~w -> (~w, ~w)\n", [List9, 5, Left2, Right2]),
+    split(List10, 5, Left3, Right3), format("~w, ~w -> (~w, ~w)\n\n", [List10, 5, Left3, Right3]),
 
     writeln("#18 Extract a slice from a list"),
     slice(List3, 3, 8, Slice1), format("~w, ~w, ~w -> ~w\n", [List3, 3, 8, Slice1]),
