@@ -150,6 +150,12 @@ main :-
     randomPermutation(List2, RandomPermutation2), format("~w -> ~w\n", [List2, RandomPermutation2]),
     randomPermutation(List3, RandomPermutation3), format("~w -> ~w\n\n", [List3, RandomPermutation3]),
 
+    writeln("#26 generate the combinations of K distinct objects chosen from the N elements of a list"),
+    combinations(List1, 3, Combinations1), format("~w, ~w -> ~w\n", [List1, 3, Combinations1]),
+    combinations(List2, 3, Combinations2), format("~w, ~w -> ~w\n", [List2, 3, Combinations2]),
+    combinations(List3, 3, Combinations3), format("~w, ~w -> ~w\n", [List3, 3, Combinations3]),
+    combinations(List1, 0, Combinations4), format("~w, ~w -> ~w\n", [List1, 0, Combinations4]),
+
     halt(0).
 
 last_(List, Last) :-
@@ -428,12 +434,12 @@ range(Minimum, Maximum, Range, Accumulator) :-
     );
     reverse_(Accumulator, Range).
 
-randomSelection(List, Amount, Selection) :-
+randomSelection(List, Draws, Selection) :-
     length_(List, Length),
-    randomSelection(List, Amount, Selection, Length, []).
-randomSelection(List, Amount, Selection, Length, Accumulator) :-
+    randomSelection(List, Draws, Selection, Length, []).
+randomSelection(List, Draws, Selection, Length, Accumulator) :-
     (
-        Amount =< 0;
+        Draws =< 0;
         List = []
     ) ->
         reverse_(Accumulator, Selection);
@@ -441,20 +447,50 @@ randomSelection(List, Amount, Selection, Length, Accumulator) :-
         random_between(1, Length, RandomNumber),
         removeAt(List, RandomNumber, Reduced, RandomElement),
         ReducedLength is Length - 1,
-        randomSelection(Reduced, (Amount - 1), Selection, ReducedLength, [RandomElement | Accumulator])
+        randomSelection(Reduced, (Draws - 1), Selection, ReducedLength, [RandomElement | Accumulator])
     ).
 
-lotto(Amount, Maximum, Lotto) :-
+lotto(Draws, Maximum, Lotto) :-
     (
-        Maximum < Amount;
+        Maximum < Draws;
         Maximum =< 0
     ) ->
         Lotto = [];
     (
         range(1, Maximum, Interval),
-        randomSelection(Interval, Amount, Lotto)
+        randomSelection(Interval, Draws, Lotto)
     ).
 
 randomPermutation(List, Permutation) :-
     length_(List, Length),
     randomSelection(List, Length, Permutation).
+
+addHeadToSubCombinations(Head, SubCombinations, WithHead) :-
+    addHeadToSubCombinations(Head, SubCombinations, WithHead, []).
+addHeadToSubCombinations(Head, SubCombinations, WithHead, Accumulator) :-
+    SubCombinations = [] -> reverse_(Accumulator, WithHead);
+    SubCombinations = [Combination | Tail] ->
+    (
+        addHeadToSubCombinations(Head, Tail, WithHead, [[Head | Combination] | Accumulator])
+    ).
+
+combinations(List, Draws, Combinations) :-
+    (
+        Draws =< 0;
+        List = []
+    ) ->
+       Combinations = [[]];
+    (
+        List = [Head | Tail],
+        combinations(Tail, (Draws - 1), SubCombinations),
+        addHeadToSubCombinations(Head, SubCombinations, WithHead),
+        length_(Tail, Length),
+        (
+            Draws =< Length ->
+            (
+                combinations(Tail, Draws, WithoutHead),
+                append(WithHead, WithoutHead, Combinations)
+            );
+            Combinations = WithHead
+        )
+    ).
