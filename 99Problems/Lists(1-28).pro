@@ -465,15 +465,6 @@ randomPermutation(List, Permutation) :-
     length_(List, Length),
     randomSelection(List, Length, Permutation).
 
-addHeadToSubCombinations(Head, SubCombinations, WithHead) :-
-    addHeadToSubCombinations(Head, SubCombinations, WithHead, []).
-addHeadToSubCombinations(Head, SubCombinations, WithHead, Accumulator) :-
-    SubCombinations = [] -> reverse_(Accumulator, WithHead);
-    SubCombinations = [Combination | Tail] ->
-    (
-        addHeadToSubCombinations(Head, Tail, WithHead, [[Head | Combination] | Accumulator])
-    ).
-
 combinations(List, Draws, Combinations) :-
     (
         Draws =< 0;
@@ -483,7 +474,7 @@ combinations(List, Draws, Combinations) :-
     (
         List = [Head | Tail],
         combinations(Tail, (Draws - 1), SubCombinations),
-        addHeadToSubCombinations(Head, SubCombinations, WithHead),
+        maplist([Combination] >> append([Head], Combination), SubCombinations, WithHead),
         length_(Tail, Length),
         (
             Draws =< Length ->
