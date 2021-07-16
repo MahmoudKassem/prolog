@@ -11,6 +11,7 @@ main :-
     List8 = ['a', 'b', ['c', ['d', 'e']], 'f'],
     List9 = ['a', 'a', 'a', 'a', 'b', 'c', 'c', 'a', 'a', 'd', 'e', 'e', 'e', 'e'],
     List10 = [1, 1, 1, 1, 2, 3, 3, 1, 1, 4, 5, 5, 5, 5],
+    List11 = [2, 0, 2],
 
     writeln("#1 last element of a list"),
     last_(List1, Last1), format("~w -> ~w\n", [List1, Last1]),
@@ -154,7 +155,12 @@ main :-
     combinations(List1, 3, Combinations1), format("~w, ~w -> ~w\n", [List1, 3, Combinations1]),
     combinations(List2, 3, Combinations2), format("~w, ~w -> ~w\n", [List2, 3, Combinations2]),
     combinations(List3, 3, Combinations3), format("~w, ~w -> ~w\n", [List3, 3, Combinations3]),
-    combinations(List1, 0, Combinations4), format("~w, ~w -> ~w\n", [List1, 0, Combinations4]),
+    combinations(List1, 0, Combinations4), format("~w, ~w -> ~w\n\n", [List1, 0, Combinations4]),
+
+    writeln("#27 group the elements of a set into disjoint subsets"),
+    groups(List1, List11, Groups1), format("~w, ~w -> ~w\n", [List1, List11, Groups1]),
+    groups(List2, List11, Groups2), format("~w, ~w -> ~w\n", [List2, List11, Groups2]),
+    groups(List3, List11, Groups3), format("~w, ~w -> ~w\n", [List3, List11, Groups3]),
 
     halt(0).
 
@@ -466,22 +472,45 @@ randomPermutation(List, Permutation) :-
     randomSelection(List, Length, Permutation).
 
 combinations(List, Draws, Combinations) :-
+    Draws =< 0 -> Combinations = [[]];
     (
-        Draws =< 0;
-        List = []
-    ) ->
-       Combinations = [[]];
-    (
+        List = [] -> Combinations = [];
         List = [Head | Tail],
         combinations(Tail, (Draws - 1), SubCombinations),
-        maplist([Combination] >> append([Head], Combination), SubCombinations, WithHead),
-        length_(Tail, Length),
+        findall([Head | Combination], member(Combination, SubCombinations), WithHead),
+        combinations(Tail, Draws, WithoutHead),
+        append(WithHead, WithoutHead, Combinations)
+    ).
+
+isElement(List, Element) :-
+    List = [] -> false;
+    List = [Head | Tail] ->
+    (
+        Element == Head -> true;
+        isElement(Tail, Element)
+    ).
+
+difference(List1, List2, Difference) :-
+    difference(List1, List2, Difference, []).
+difference(List1, List2, Difference, Accumulator) :-
+    List1 = [] -> reverse_(Accumulator, Difference);
+    List1 = [Head | Tail] ->
+    (
+        \+isElement(List2, Head) ->
+            difference(Tail, List2, Difference, [Head | Accumulator]);
+        difference(Tail, List2, Difference, Accumulator)
+    ).
+
+groups(List, Sizes, Groups) :-
+    Sizes = [] -> Groups = [[]];
+    Sizes = [Head | Tail],
+    (
+        combinations(List, Head, Combinations),
+        findall([Combination | Group],
         (
-            Draws =< Length ->
-            (
-                combinations(Tail, Draws, WithoutHead),
-                append(WithHead, WithoutHead, Combinations)
-            );
-            Combinations = WithHead
-        )
+            member(Combination, Combinations), 
+            difference(List, Combination, Difference),
+            groups(Difference, Tail, SubGroups),
+            member(Group, SubGroups)
+        ), Groups)
     ).
