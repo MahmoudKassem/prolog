@@ -524,11 +524,11 @@ groups(List, Sizes, Groups) :-
         ), Groups)
     ).
 
-pivot(Predicate, Pivot, List, Less, GreaterOrEqual) :-
-    pivot(Predicate, Pivot, List, ReversedLess, ReversedGreaterOrEqual, [], []),
+pivot(SortBy, Pivot, List, Less, GreaterOrEqual) :-
+    pivot(SortBy, Pivot, List, ReversedLess, ReversedGreaterOrEqual, [], []),
     reverse_(ReversedLess, Less),
     reverse_(ReversedGreaterOrEqual, GreaterOrEqual).
-pivot(Predicate, Pivot, List, Less, GreaterOrEqual, AccLess, AccGreaterOrEqual) :-
+pivot(SortBy, Pivot, List, Less, GreaterOrEqual, AccLess, AccGreaterOrEqual) :-
     List = [] ->
     (
         Less = AccLess,
@@ -536,52 +536,57 @@ pivot(Predicate, Pivot, List, Less, GreaterOrEqual, AccLess, AccGreaterOrEqual) 
     );
     List = [Head | Tail],
     (
-        call(Predicate, Head, ResultHead),
-        call(Predicate, Pivot, ResultPivot),
-        ResultHead < ResultPivot ->
-            pivot(Predicate, Pivot, Tail, Less, GreaterOrEqual, [Head | AccLess], AccGreaterOrEqual);
-        pivot(Predicate, Pivot, Tail, Less, GreaterOrEqual, AccLess, [Head | AccGreaterOrEqual])
+        call(SortBy, Head, Pivot) ->
+            pivot(SortBy, Pivot, Tail, Less, GreaterOrEqual, [Head | AccLess], AccGreaterOrEqual);
+        pivot(SortBy, Pivot, Tail, Less, GreaterOrEqual, AccLess, [Head | AccGreaterOrEqual])
     ).
 
-sortBy(Predicate, List, Sorted) :-
-    sortBy(Predicate, List, ReversedSorted, []),
+sortBy(SortBy, List, Sorted) :-
+    sortBy(SortBy, List, ReversedSorted, []),
     reverse_(ReversedSorted, Sorted).
-sortBy(Predicate, List, Sorted, Acc) :-
+sortBy(SortBy, List, Sorted, Acc) :-
     List = [] -> Sorted = Acc;
     List = [Head | Tail],
-	pivot(Predicate, Head ,Tail, Less, GreaterOrEqual),
-	sortBy(Predicate, Less, SortedLess, Acc),
-    sortBy(Predicate, GreaterOrEqual, Sorted, [Head | SortedLess]).
+	pivot(SortBy, Head ,Tail, Less, GreaterOrEqual),
+	sortBy(SortBy, Less, SortedLess, Acc),
+    sortBy(SortBy, GreaterOrEqual, Sorted, [Head | SortedLess]).
 
 lsort(List, Sorted) :-
     List = [] -> Sorted = [];
-    sortBy(length_, List, Sorted).
+    sortBy([A, B] >>
+    (
+        length_(A, LengthA),
+        length_(B, LengthB),
+        LengthA < LengthB
+    ), List, Sorted).
 
-group(Predicate, Key, List, Group) :-
-    group(Predicate, Key, List, Group, [Key]).
-group(Predicate, Key, List, Group, Acc) :-
+group(GroupBy, Key, List, Group) :-
+    group(GroupBy, Key, List, Group, [Key]).
+group(GroupBy, Key, List, Group, Acc) :-
     List = [] -> reverse_(Acc, Group);
     List = [Head | Tail],
     (
-        call(Predicate, Head, ResultHead),
-        call(Predicate, Key, ResultKey),
-        ResultHead == ResultKey ->
-            group(Predicate, Key, Tail, Group, [Head | Acc]);
-        group(Predicate, Key, Tail, Group, Acc)
+        call(GroupBy, Head, Key) ->
+            group(GroupBy, Key, Tail, Group, [Head | Acc]);
+        group(GroupBy, Key, Tail, Group, Acc)
     ).
 
-groupBy(Predicate, List, Grouped) :-
-    groupBy(Predicate, List, Grouped, []).
-groupBy(Predicate, List, Grouped, Acc) :-
+groupBy(GroupBy, List, Grouped) :-
+    groupBy(GroupBy, List, Grouped, []).
+groupBy(GroupBy, List, Grouped, Acc) :-
     List = [] -> reverse_(Acc, Grouped);
     List = [Head | Tail],
-    group(Predicate, Head, Tail, Group),
+    group(GroupBy, Head, Tail, Group),
     difference(List, Group, Difference),
-    groupBy(Predicate, Difference, Grouped, [Group | Acc]).
+    groupBy(GroupBy, Difference, Grouped, [Group | Acc]).
 
 lfsort(List, Sorted) :-
     List = [] -> Sorted = [];
-    groupBy(length_, List, Groups),
+    groupBy([A, B] >> (
+        length_(A, LengthA),
+        length_(B, LengthB),
+        LengthA =:= LengthB
+    ), List, Groups),
     lsort(Groups, SortedGroups),
     findall(GroupMember,
     (
