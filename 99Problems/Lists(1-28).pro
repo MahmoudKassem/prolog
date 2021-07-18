@@ -12,6 +12,8 @@ main :-
     List9 = ['a', 'a', 'a', 'a', 'b', 'c', 'c', 'a', 'a', 'd', 'e', 'e', 'e', 'e'],
     List10 = [1, 1, 1, 1, 2, 3, 3, 1, 1, 4, 5, 5, 5, 5],
     List11 = [2, 0, 2],
+    List12 = [[1, 2, 3], [4, 5], [6, 7, 8], [4, 5], [9, 10, 11, 12], [13, 14], [15]],
+    List13 = [['a', 'b', 'c'], ['d', 'e'], ['f', 'g', 'h'], ['d', 'e'], ['i', 'j', 'k', 'l'], ['m', 'n'], ['o']],
 
     writeln("#1 last element of a list"),
     last_(List1, Last1), format("~w -> ~w\n", [List1, Last1]),
@@ -160,7 +162,15 @@ main :-
     writeln("#27 group the elements of a set into disjoint subsets"),
     groups(List1, List11, Groups1), format("~w, ~w -> ~w\n", [List1, List11, Groups1]),
     groups(List2, List11, Groups2), format("~w, ~w -> ~w\n", [List2, List11, Groups2]),
-    groups(List3, List11, Groups3), format("~w, ~w -> ~w\n", [List3, List11, Groups3]),
+    groups(List3, List11, Groups3), format("~w, ~w -> ~w\n\n", [List3, List11, Groups3]),
+
+    writeln("#28 sorting a list of lists according to length of sublists"),
+    lsort(List12, LSorted12), format("~w -> ~w\n", [List12, LSorted12]),
+    lsort(List13, LSorted13), format("~w -> ~w\n", [List13, LSorted13]),
+    lsort(List3, LSorted3), format("~w -> ~w\n\n", [List3, LSorted3]),
+    lfsort(List12, LfSorted12), format("~w -> ~w\n", [List12, LfSorted12]),
+    lfsort(List13, LfSorted13), format("~w -> ~w\n", [List13, LfSorted13]),
+    lfsort(List3, LfSorted3), format("~w -> ~w\n", [List3, LfSorted3]),
 
     halt(0).
 
@@ -192,20 +202,20 @@ elementAt(List, Position, ElementAt) :-
 
 length_(List, Length) :-
     length_(List, Length, 0).
-length_(List, Length, Accumulator) :-
-    List = [] -> Length is Accumulator;
+length_(List, Length, Acc) :-
+    List = [] -> Length is Acc;
     (
         List = [_ | Tail],
-        length_(Tail, Length, (Accumulator + 1))
+        length_(Tail, Length, (Acc + 1))
     ).
 
 reverse_(List, Reversed) :-
     reverse_(List, Reversed, []).
-reverse_(List, Reversed, Accumulator) :-
-    List = [] -> Reversed = Accumulator;
+reverse_(List, Reversed, Acc) :-
+    List = [] -> Reversed = Acc;
     (
         List = [Head | Tail],
-        reverse_(Tail, Reversed, [Head | Accumulator])
+        reverse_(Tail, Reversed, [Head | Acc])
     ).
 
 isPalindrom(List, IsPalindrom) :-
@@ -224,58 +234,57 @@ flatten_(Nested, Flattened) :-
 
 compress(List, Compressed) :-
     compress(List, Compressed, []).
-compress(List, Compressed, Accumulator) :-
-    List = [] -> reverse_(Accumulator, Compressed);
-    List = [Head] -> reverse_([Head | Accumulator], Compressed);
+compress(List, Compressed, Acc) :-
+    List = [] -> reverse_(Acc, Compressed);
+    List = [Head] -> reverse_([Head | Acc], Compressed);
     List = [Head, Next | Tail],
     (
-        Head == Next -> compress([Next | Tail], Compressed, Accumulator);
-        compress([Next | Tail], Compressed, [Head | Accumulator])
+        Head == Next -> compress([Next | Tail], Compressed, Acc);
+        compress([Next | Tail], Compressed, [Head | Acc])
     ).
 
 pack(List, Packed) :-
     pack(List, Packed, [], []).
-pack(List, Packed, SubList, Accumulator) :-
+pack(List, Packed, SubList, Acc) :-
     List = [] ->
         (
-            SubList = [] -> Packed = Accumulator;
-            append(Accumulator, [SubList], Packed)
+            SubList = [] -> reverse_(Acc, Packed);
+            reverse_([SubList | Acc], Packed)
         );
     List = [Head | Tail],
     (
         SubList = [] ->
-            pack(Tail, Packed, [Head], Accumulator);
+            pack(Tail, Packed, [Head], Acc);
         SubList = [Current | _],
         (
             Head == Current ->
-                pack(Tail, Packed, [Current | SubList], Accumulator);
-            append(Accumulator, [SubList], NewAccumulator),
-            pack(Tail, Packed, [Head], NewAccumulator)
+                pack(Tail, Packed, [Current | SubList], Acc);
+            pack(Tail, Packed, [Head], [SubList | Acc])
         )
     ).
 
 encode(List, Encoded) :-
     pack(List, Packed),
     encode(Packed, Encoded, []).
-encode(Packed, Encoded, Accumulator) :-
-    Packed = [] -> reverse_(Accumulator, Encoded);
+encode(Packed, Encoded, Acc) :-
+    Packed = [] -> reverse_(Acc, Encoded);
     Packed = [SubList | Tail],
     SubList = [Head | _],
     length_(SubList, Length),
-    encode(Tail, Encoded, [[Length, Head] | Accumulator]).
+    encode(Tail, Encoded, [[Length, Head] | Acc]).
 
 encodeModified(List, Encoded) :-
     pack(List, Packed),
     encodeModified(Packed, Encoded, []).
-encodeModified(Packed, Encoded, Accumulator) :-
-    Packed = [] -> reverse_(Accumulator, Encoded);
+encodeModified(Packed, Encoded, Acc) :-
+    Packed = [] -> reverse_(Acc, Encoded);
     Packed = [Sublist | Tail],
     Sublist = [Head | _],
     length_(Sublist, Replications),
     (
         Replications > 1 ->
-            encodeModified(Tail, Encoded, [[Replications, Head] | Accumulator]);
-        encodeModified(Tail, Encoded, [Head | Accumulator])
+            encodeModified(Tail, Encoded, [[Replications, Head] | Acc]);
+        encodeModified(Tail, Encoded, [Head | Acc])
     ).
 
 replicateHead(Replications, Head, List, Replicated) :-
@@ -284,102 +293,102 @@ replicateHead(Replications, Head, List, Replicated) :-
 
 decodeModified(Encoded, Decoded) :-
     decodeModified(Encoded, Decoded, []).
-decodeModified(Encoded, Decoded, Accumulator) :-
-    Encoded = [] -> reverse_(Accumulator, Decoded);
+decodeModified(Encoded, Decoded, Acc) :-
+    Encoded = [] -> reverse_(Acc, Decoded);
     Encoded = [EncodedHead | Tail],
     (
         EncodedHead = [Replications, Head] ->
             (
-                replicateHead(Replications, Head, Accumulator, NewAccumulator),
-                decodeModified(Tail, Decoded, NewAccumulator)
+                replicateHead(Replications, Head, Acc, NewAcc),
+                decodeModified(Tail, Decoded, NewAcc)
             );
-        decodeModified(Tail, Decoded, [EncodedHead | Accumulator])
+        decodeModified(Tail, Decoded, [EncodedHead | Acc])
     ).
 
 removeReplications(Current, List, Replications, Reduced) :-
     removeReplications(Current, List, Replications, Reduced, 1).
-removeReplications(Current, List, Replications, Reduced, Accumulator) :-
+removeReplications(Current, List, Replications, Reduced, Acc) :-
     List = [] ->
         (
-            Replications is Accumulator,
+            Replications is Acc,
             Reduced = List
         );
     List = [Head | Tail],
     (
         Current == Head ->
-            removeReplications(Current, Tail, Replications, Reduced, (Accumulator + 1));
+            removeReplications(Current, Tail, Replications, Reduced, (Acc + 1));
         (
-            Replications is Accumulator,
+            Replications is Acc,
             Reduced = List
         )
     ).
 
 encodeDirect(List, Encoded) :-
     encodedList(List, Encoded, []).
-encodedList(List, Encoded, Accumulator) :-
-    List = [] -> reverse_(Accumulator, Encoded);
+encodedList(List, Encoded, Acc) :-
+    List = [] -> reverse_(Acc, Encoded);
     List = [Head | Tail],
     removeReplications(Head, Tail, Replications, Reduced),
     (
         Replications > 1 ->
-            encodedList(Reduced, Encoded, [[Replications, Head] | Accumulator]);
-        encodedList(Tail, Encoded, [Head | Accumulator])
+            encodedList(Reduced, Encoded, [[Replications, Head] | Acc]);
+        encodedList(Tail, Encoded, [Head | Acc])
     ).
 
 dupli(List, Duplicated) :-
     dupli(List, Duplicated, []).
-dupli(List, Duplicated, Accumulator) :-
-    List = [] -> reverse_(Accumulator, Duplicated);
+dupli(List, Duplicated, Acc) :-
+    List = [] -> reverse_(Acc, Duplicated);
     List = [Head | Tail],
-    dupli(Tail, Duplicated, [Head, Head | Accumulator]).
+    dupli(Tail, Duplicated, [Head, Head | Acc]).
 
 repli(List, Replications, Replicated) :-
     repli(List, Replications, Replicated, []).
-repli(List, Replications, Replicated, Accumulator) :-
-    List = [] -> reverse_(Accumulator, Replicated);
+repli(List, Replications, Replicated, Acc) :-
+    List = [] -> reverse_(Acc, Replicated);
     List = [Head | Tail],
-    replicateHead(Replications, Head, Accumulator, NewAccumulator),
-    repli(Tail, Replications, Replicated, NewAccumulator).
+    replicateHead(Replications, Head, Acc, NewAcc),
+    repli(Tail, Replications, Replicated, NewAcc).
 
 drop(List, Frequency, Reduced) :-
     drop(List, Frequency, Reduced, 1, []).
-drop(List, Frequency, Reduced, Count, Accumulator) :-
-    List = [] -> reverse_(Accumulator, Reduced);
+drop(List, Frequency, Reduced, Count, Acc) :-
+    List = [] -> reverse_(Acc, Reduced);
     List = [Head | Tail],
     (
         Count =:= Frequency ->
-            drop(Tail, Frequency, Reduced, 1, Accumulator);
-        drop(Tail, Frequency, Reduced, (Count + 1), [Head | Accumulator])
+            drop(Tail, Frequency, Reduced, 1, Acc);
+        drop(Tail, Frequency, Reduced, (Count + 1), [Head | Acc])
     ).
 
 split(List, Position, Left, Right) :-
     split(List, Position, Left, Right, 1, [], []).
-split(List, Position, Left, Right, Index, LeftAccumulator, RightAccumulator) :-
+split(List, Position, Left, Right, Index, LeftAcc, RightAcc) :-
     List = [] ->
         (
-            reverse_(LeftAccumulator, Left),
-            reverse_(RightAccumulator, Right)
+            reverse_(LeftAcc, Left),
+            reverse_(RightAcc, Right)
         );
     List = [Head | Tail],
     (
         Index =< Position ->
-            split(Tail, Position, Left, Right, (Index + 1), [Head | LeftAccumulator], RightAccumulator);
-        split(Tail, Position, Left, Right, (Index + 1), LeftAccumulator,  [Head | RightAccumulator])
+            split(Tail, Position, Left, Right, (Index + 1), [Head | LeftAcc], RightAcc);
+        split(Tail, Position, Left, Right, (Index + 1), LeftAcc,  [Head | RightAcc])
     ).
 
 slice(List, Start, End, Slice) :-
     slice(List, Start, End, Slice, 1, []).
-slice(List, Start, End, Slice, Index, Accumulator) :-
-    List = [] -> reverse_(Accumulator, Slice);
+slice(List, Start, End, Slice, Index, Acc) :-
+    List = [] -> reverse_(Acc, Slice);
     List = [Head | Tail],
     (
-        Index > End -> reverse_(Accumulator, Slice);
+        Index > End -> reverse_(Acc, Slice);
         (
             Index >= Start,
             Index =< End
         ) ->
-            slice(Tail, Start, End, Slice, (Index + 1), [Head | Accumulator]);
-        slice(Tail, Start, End, Slice, (Index + 1), Accumulator)
+            slice(Tail, Start, End, Slice, (Index + 1), [Head | Acc]);
+        slice(Tail, Start, End, Slice, (Index + 1), Acc)
     ).
 
 rotate(List, Positions, Rotated) :-
@@ -407,53 +416,53 @@ removeAt(List, Position, Reduced, RemovedElement) :-
         var(RemovedElement) -> RemovedElement = false;
         true
     ).
-removeAt(List, Position, Reduced, Removed, Index, Accumulator) :-
-    List = [] -> reverse_(Accumulator, Reduced);
+removeAt(List, Position, Reduced, Removed, Index, Acc) :-
+    List = [] -> reverse_(Acc, Reduced);
     List = [Head | Tail],
     (
         Index =:= Position ->
         (
             Removed = Head,
-            removeAt(Tail, Position, Reduced, Removed, (Index + 1), Accumulator)
+            removeAt(Tail, Position, Reduced, Removed, (Index + 1), Acc)
         );
-        removeAt(Tail, Position, Reduced, Removed, (Index + 1), [Head | Accumulator])
+        removeAt(Tail, Position, Reduced, Removed, (Index + 1), [Head | Acc])
     ).
 
 insertAt(List, Value, Position, Increased) :-
     insertAt(List, Value, Position, Increased, 1, []).
-insertAt(List, Value, Position, Increased, Index, Accumulator) :-
-    List = [] -> reverse_(Accumulator, Increased);
+insertAt(List, Value, Position, Increased, Index, Acc) :-
+    List = [] -> reverse_(Acc, Increased);
     List = [Head | Tail],
     (
         Index =:= Position ->
-            insertAt(Tail, Value, Position, Increased, (Index + 1), [Head, Value | Accumulator]);
-        insertAt(Tail, Value, Position, Increased, (Index + 1), [Head | Accumulator])
+            insertAt(Tail, Value, Position, Increased, (Index + 1), [Head, Value | Acc]);
+        insertAt(Tail, Value, Position, Increased, (Index + 1), [Head | Acc])
     ).
 
 range(Minimum, Maximum, Range) :-
     range(Minimum, Maximum, Range, []).
-range(Minimum, Maximum, Range, Accumulator) :-
+range(Minimum, Maximum, Range, Acc) :-
     Minimum =< Maximum ->
     (
         Next is Minimum + 1,
-        range(Next, Maximum, Range, [Minimum | Accumulator])
+        range(Next, Maximum, Range, [Minimum | Acc])
     );
-    reverse_(Accumulator, Range).
+    reverse_(Acc, Range).
 
 randomSelection(List, Draws, Selection) :-
     length_(List, Length),
     randomSelection(List, Draws, Selection, Length, []).
-randomSelection(List, Draws, Selection, Length, Accumulator) :-
+randomSelection(List, Draws, Selection, Length, Acc) :-
     (
         Draws =< 0;
         List = []
     ) ->
-        reverse_(Accumulator, Selection);
+        reverse_(Acc, Selection);
     (
         random_between(1, Length, RandomNumber),
         removeAt(List, RandomNumber, Reduced, RandomElement),
         ReducedLength is Length - 1,
-        randomSelection(Reduced, (Draws - 1), Selection, ReducedLength, [RandomElement | Accumulator])
+        randomSelection(Reduced, (Draws - 1), Selection, ReducedLength, [RandomElement | Acc])
     ).
 
 lotto(Draws, Maximum, Lotto) :-
@@ -492,13 +501,13 @@ isElement(List, Element) :-
 
 difference(List1, List2, Difference) :-
     difference(List1, List2, Difference, []).
-difference(List1, List2, Difference, Accumulator) :-
-    List1 = [] -> reverse_(Accumulator, Difference);
+difference(List1, List2, Difference, Acc) :-
+    List1 = [] -> reverse_(Acc, Difference);
     List1 = [Head | Tail] ->
     (
         \+isElement(List2, Head) ->
-            difference(Tail, List2, Difference, [Head | Accumulator]);
-        difference(Tail, List2, Difference, Accumulator)
+            difference(Tail, List2, Difference, [Head | Acc]);
+        difference(Tail, List2, Difference, Acc)
     ).
 
 groups(List, Sizes, Groups) :-
@@ -514,3 +523,68 @@ groups(List, Sizes, Groups) :-
             member(Group, SubGroups)
         ), Groups)
     ).
+
+pivot(Predicate, Pivot, List, Less, GreaterOrEqual) :-
+    pivot(Predicate, Pivot, List, ReversedLess, ReversedGreaterOrEqual, [], []),
+    reverse_(ReversedLess, Less),
+    reverse_(ReversedGreaterOrEqual, GreaterOrEqual).
+pivot(Predicate, Pivot, List, Less, GreaterOrEqual, AccLess, AccGreaterOrEqual) :-
+    List = [] ->
+    (
+        Less = AccLess,
+        GreaterOrEqual = AccGreaterOrEqual
+    );
+    List = [Head | Tail],
+    (
+        call(Predicate, Head, ResultHead),
+        call(Predicate, Pivot, ResultPivot),
+        ResultHead < ResultPivot ->
+            pivot(Predicate, Pivot, Tail, Less, GreaterOrEqual, [Head | AccLess], AccGreaterOrEqual);
+        pivot(Predicate, Pivot, Tail, Less, GreaterOrEqual, AccLess, [Head | AccGreaterOrEqual])
+    ).
+
+sortBy(Predicate, List, Sorted) :-
+    sortBy(Predicate, List, ReversedSorted, []),
+    reverse_(ReversedSorted, Sorted).
+sortBy(Predicate, List, Sorted, Acc) :-
+    List = [] -> Sorted = Acc;
+    List = [Head | Tail],
+	pivot(Predicate, Head ,Tail, Less, GreaterOrEqual),
+	sortBy(Predicate, Less, SortedLess, Acc),
+    sortBy(Predicate, GreaterOrEqual, Sorted, [Head | SortedLess]).
+
+lsort(List, Sorted) :-
+    List = [] -> Sorted = [];
+    sortBy(length_, List, Sorted).
+
+group(Predicate, Key, List, Group) :-
+    group(Predicate, Key, List, Group, [Key]).
+group(Predicate, Key, List, Group, Acc) :-
+    List = [] -> reverse_(Acc, Group);
+    List = [Head | Tail],
+    (
+        call(Predicate, Head, ResultHead),
+        call(Predicate, Key, ResultKey),
+        ResultHead == ResultKey ->
+            group(Predicate, Key, Tail, Group, [Head | Acc]);
+        group(Predicate, Key, Tail, Group, Acc)
+    ).
+
+groupBy(Predicate, List, Grouped) :-
+    groupBy(Predicate, List, Grouped, []).
+groupBy(Predicate, List, Grouped, Acc) :-
+    List = [] -> reverse_(Acc, Grouped);
+    List = [Head | Tail],
+    group(Predicate, Head, Tail, Group),
+    difference(List, Group, Difference),
+    groupBy(Predicate, Difference, Grouped, [Group | Acc]).
+
+lfsort(List, Sorted) :-
+    List = [] -> Sorted = [];
+    groupBy(length_, List, Groups),
+    lsort(Groups, SortedGroups),
+    findall(GroupMember,
+    (
+        member(Group, SortedGroups),
+        member(GroupMember, Group)
+    ), Sorted).
