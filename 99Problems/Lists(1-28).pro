@@ -223,7 +223,7 @@ isPalindrom(List, IsPalindrom) :-
     IsPalindrom = false.
 
 flatten_(Nested, Flattened) :-
-    \+(is_list(Nested)) -> Flattened = [Nested];
+    \+is_list(Nested) -> Flattened = [Nested];
     Nested = [] -> Flattened = [];
     Nested = [Head | Tail],
     (
@@ -421,10 +421,10 @@ removeAt(List, Position, Reduced, Removed, Index, Acc) :-
     List = [Head | Tail],
     (
         Index =:= Position ->
-        (
-            Removed = Head,
-            removeAt(Tail, Position, Reduced, Removed, (Index + 1), Acc)
-        );
+            (
+                Removed = Head,
+                removeAt(Tail, Position, Reduced, Removed, (Index + 1), Acc)
+            );
         removeAt(Tail, Position, Reduced, Removed, (Index + 1), [Head | Acc])
     ).
 
@@ -443,10 +443,10 @@ range(Minimum, Maximum, Range) :-
     range(Minimum, Maximum, Range, []).
 range(Minimum, Maximum, Range, Acc) :-
     Minimum =< Maximum ->
-    (
-        Next is Minimum + 1,
-        range(Next, Maximum, Range, [Minimum | Acc])
-    );
+        (
+            Next is Minimum + 1,
+            range(Next, Maximum, Range, [Minimum | Acc])
+        );
     reverse_(Acc, Range).
 
 randomSelection(List, Draws, Selection) :-
@@ -493,7 +493,7 @@ combinations(List, Draws, Combinations) :-
 
 isElement(List, Element) :-
     List = [] -> false;
-    List = [Head | Tail] ->
+    List = [Head | Tail],
     (
         Element == Head -> true;
         isElement(Tail, Element)
@@ -503,7 +503,7 @@ difference(List1, List2, Difference) :-
     difference(List1, List2, Difference, []).
 difference(List1, List2, Difference, Acc) :-
     List1 = [] -> reverse_(Acc, Difference);
-    List1 = [Head | Tail] ->
+    List1 = [Head | Tail],
     (
         \+isElement(List2, Head) ->
             difference(Tail, List2, Difference, [Head | Acc]);
