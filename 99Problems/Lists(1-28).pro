@@ -314,15 +314,15 @@ removeReplications(Current, List, Replications, Reduced, Acc) :-
     ).
 
 encodeDirect(List, Encoded) :-
-    encodedList(List, Encoded, []).
-encodedList(List, Encoded, Acc) :-
+    encodeDirect(List, Encoded, []).
+encodeDirect(List, Encoded, Acc) :-
     List = [] -> reverse_(Acc, Encoded);
     List = [Head | Tail],
     removeReplications(Head, Tail, Replications, Reduced),
     (
         Replications > 1 ->
-            encodedList(Reduced, Encoded, [[Replications, Head] | Acc]);
-        encodedList(Tail, Encoded, [Head | Acc])
+            encodeDirect(Reduced, Encoded, [[Replications, Head] | Acc]);
+        encodeDirect(Tail, Encoded, [Head | Acc])
     ).
 
 dupli(List, Duplicated) :-
