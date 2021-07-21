@@ -177,23 +177,19 @@ main :-
 last_(List, Last) :-
     List = [] -> Last = false;
     List = [Last];
-    (
-        List = [_ | Tail],
-        last_(Tail, Last)
-    ).
+    List = [_ | Tail],
+    last_(Tail, Last).
 
 lastButOne(List, LastButOne) :-
     List = [] -> LastButOne = false;
     List = [_] -> LastButOne = false;
     List = [LastButOne, _];
-    (
-        List = [_ | Tail],
-        lastButOne(Tail, LastButOne)
-    ).
+    List = [_ | Tail],
+    lastButOne(Tail, LastButOne).
 
 elementAt(List, Position, ElementAt) :-
     List = [] -> ElementAt = false;
-    List = [Head | Tail] ->
+    List = [Head | Tail],
     (
         Position < 1 -> ElementAt = false;
         Position =:= 1 -> ElementAt = Head;
@@ -204,19 +200,15 @@ length_(List, Length) :-
     length_(List, Length, 0).
 length_(List, Length, Acc) :-
     List = [] -> Length is Acc;
-    (
-        List = [_ | Tail],
-        length_(Tail, Length, (Acc + 1))
-    ).
+    List = [_ | Tail],
+    length_(Tail, Length, (Acc + 1)).
 
 reverse_(List, Reversed) :-
     reverse_(List, Reversed, []).
 reverse_(List, Reversed, Acc) :-
     List = [] -> Reversed = Acc;
-    (
-        List = [Head | Tail],
-        reverse_(Tail, Reversed, [Head | Acc])
-    ).
+    List = [Head | Tail],
+    reverse_(Tail, Reversed, [Head | Acc]).
 
 isPalindrom(List, IsPalindrom) :-
     reverse_(List, List) -> IsPalindrom = true;
@@ -226,11 +218,9 @@ flatten_(Nested, Flattened) :-
     \+is_list(Nested) -> Flattened = [Nested];
     Nested = [] -> Flattened = [];
     Nested = [Head | Tail],
-    (
-        flatten_(Head, FlattenedHead),
-        flatten_(Tail, FlattenedTail),
-        append(FlattenedHead, FlattenedTail, Flattened)
-    ).
+    flatten_(Head, FlattenedHead),
+    flatten_(Tail, FlattenedTail),
+    append(FlattenedHead, FlattenedTail, Flattened).
 
 compress(List, Compressed) :-
     compress(List, Compressed, []).
@@ -482,14 +472,12 @@ randomPermutation(List, Permutation) :-
 
 combinations(List, Draws, Combinations) :-
     Draws =< 0 -> Combinations = [[]];
-    (
-        List = [] -> Combinations = [];
-        List = [Head | Tail],
-        combinations(Tail, (Draws - 1), SubCombinations),
-        findall([Head | Combination], member(Combination, SubCombinations), WithHead),
-        combinations(Tail, Draws, WithoutHead),
-        append(WithHead, WithoutHead, Combinations)
-    ).
+    List = [] -> Combinations = [];
+    List = [Head | Tail],
+    combinations(Tail, (Draws - 1), SubCombinations),
+    findall([Head | Combination], member(Combination, SubCombinations), WithHead),
+    combinations(Tail, Draws, WithoutHead),
+    append(WithHead, WithoutHead, Combinations).
 
 isElement(List, Element) :-
     List = [] -> false;
@@ -513,16 +501,14 @@ difference(List1, List2, Difference, Acc) :-
 groups(List, Sizes, Groups) :-
     Sizes = [] -> Groups = [[]];
     Sizes = [Head | Tail],
+    combinations(List, Head, Combinations),
+    findall([Combination | Group],
     (
-        combinations(List, Head, Combinations),
-        findall([Combination | Group],
-        (
-            member(Combination, Combinations), 
-            difference(List, Combination, Difference),
-            groups(Difference, Tail, SubGroups),
-            member(Group, SubGroups)
-        ), Groups)
-    ).
+        member(Combination, Combinations), 
+        difference(List, Combination, Difference),
+        groups(Difference, Tail, SubGroups),
+        member(Group, SubGroups)
+    ), Groups).
 
 pivot(SortBy, Pivot, List, Less, GreaterOrEqual) :-
     pivot(SortBy, Pivot, List, ReversedLess, ReversedGreaterOrEqual, [], []),
