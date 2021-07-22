@@ -114,9 +114,6 @@ goldbach(Number,(A, B)) :-
     member(B, PrimesList),
     A + B =:= Number.
 
-goldbach_(Number, (Number, A, B)) :-
-    goldbach(Number, (A, B)).
-
 goldbachList(Start, End, GoldbachList) :-
     (
         Start < 4,
@@ -124,9 +121,11 @@ goldbachList(Start, End, GoldbachList) :-
         Start > End
     ) -> GoldbachList = [];
     End == 4 -> GoldbachList = [(4, 2, 2)];
-    findall(EvenNumber,
+    findall(Number,
     (
-        between(Start, End, EvenNumber),
-        EvenNumber mod 2 =:= 0
+        between(Start, End, Number),
+        Number mod 2 =:= 0
     ), EvenNumbers),
-    maplist(goldbach_, EvenNumbers, GoldbachList).
+    maplist([Number, (Number, A, B)] >>
+        goldbach(Number, (A, B)),
+    EvenNumbers, GoldbachList).
