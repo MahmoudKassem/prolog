@@ -150,11 +150,8 @@ goldbachList(Start, End, GoldbachList) :-
         Start > End
     ) -> GoldbachList = [];
     End == 4 -> GoldbachList = [(4, 2, 2)];
-    findall(Number,
-    (
-        between(Start, End, Number),
-        Number mod 2 =:= 0
-    ), EvenNumbers),
+    numlist(Start, End, Numbers),
+    include([Number] >> (Number mod 2 =:= 0), Numbers, EvenNumbers),
     maplist([Number, (Number, A, B)] >> goldbach(Number, (A, B)), EvenNumbers, GoldbachList).
 
 greatestCommonDivisor(A, B, GreatestCommonDivisor) :-
